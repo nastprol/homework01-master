@@ -1,5 +1,7 @@
 package fintech.homework01
 
+import scala.collection.immutable
+
 // Используя функции io.readLine и io.printLine напишите игру "Виселица"
 // Пример ввода и тест можно найти в файле src/test/scala/fintech/homework01/HangmanTest.scala
 // Тест можно запустить через в IDE или через sbt (написав в консоли sbt test)
@@ -35,10 +37,8 @@ class Hangman(io: IODevice) {
   private var gallowsStage = -1
   private var guessedLetters = ""
 
-  private def checkLetter(word: String, letter: Char): Set[Int] = {
-    var positions = Set[Int]()
-    for (i <- Range(0, word.length)) if (word.charAt(i) == letter) positions += i
-    positions
+  private def checkLetter(word: String, letter: Char): immutable.IndexedSeq[Int] = {
+    word.indices.filter(i => word.charAt(i) == letter)
   }
 
   private def processLetter(word : String, letter : Char): String = {
@@ -47,7 +47,7 @@ class Hangman(io: IODevice) {
     val positions = checkLetter(word, letter)
     if (positions.isEmpty) gallowsStage += 1
     else for (i <- positions)
-      guessedLetters = guessedLetters.substring(0, i) + letter + guessedLetters.substring(i + 1, guessedLetters.length)
+      guessedLetters = guessedLetters.updated(i, letter)
     val stage = if (gallowsStage > -1) stages(gallowsStage) else ""
     stage
   }
